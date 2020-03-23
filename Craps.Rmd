@@ -1,0 +1,76 @@
+---
+title: "Craps"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
+library(gganimate)
+library(gapminder)
+library(magick)
+theme_set(theme_bw())
+```
+
+```{r}
+p <- ggplot(
+  gapminder,
+  aes(x = gdpPercap, y=lifeExp, size = pop, colour = country)
+  ) +
+  geom_point(show.legend = FALSE, alpha = 0.7) +
+  scale_color_viridis_d() +
+  scale_size(range = c(2, 12)) +
+  scale_x_log10() +
+  labs(x = "GDP per capita", y = "Life expectancy")
+p
+```
+
+```{r}
+p + facet_wrap(~continent) +
+  transition_time(year) +
+  labs(title = "Year: {frame_time}")
+```
+
+```{r}
+roll_one_die <- function(dice) { 
+   dice <- c("1", "2", "3", "4", "5", "6")
+   sample(x = 1:6, size = 1)
+}
+```
+
+```{r}
+roll_two_dice <- function() { 
+   roll_one_die() + roll_one_die() }
+```
+```{r}
+roll_ten_dice <- function() {
+map_int(1:10, ~ roll_two_dice()) 
+}
+```
+
+```{r}
+roll_thousand_dice <- function() {
+  map_int(1:1000, ~ roll_two_dice())
+}
+```
+
+```{r}
+roll_data <- as.tibble(roll_thousand_dice()) %>% 
+  arrange(desc(value)) %>% 
+  count(value)
+```
+
+```{r}
+roll_six_dice <- function() {
+map_int(1:6, ~ roll_two_dice()) 
+}
+```
+
+```{r}
+roll_six_thousand_dice <- function() {
+  map_int(1:1000, ~ roll_six_dice())
+}
+```
+
+
